@@ -1,10 +1,10 @@
 import streamlit as st
 from serpapi import GoogleSearch
 import os
-from dotenv import load_dotenv
+# from dotenv import load_dotenv # Not needed for Cloud
 
 # Load environment variables
-load_dotenv()
+# load_dotenv() # Not needed for Cloud
 
 # --- Page Config & Theme ---
 st.set_page_config(
@@ -170,10 +170,15 @@ with col_main:
 
 if search_button and artist_name:
     
-    api_key = os.getenv("SERPAPI_API_KEY")
+    # Try to get API key from Streamlit Secrets (Cloud) or Environment (Local)
+    try:
+        api_key = st.secrets["SERPAPI_API_KEY"]
+    except:
+        api_key = os.getenv("SERPAPI_API_KEY")
     
     if not api_key or "your_api_key_here" in api_key:
         st.error("⚠️ ACCESS DENIED: Missing SERPAPI_API_KEY in configuration.")
+        st.info("Did you add it to Streamlit Secrets? (Manage App -> Settings -> Secrets)")
     else:
 
         # Update the artist.txt file
